@@ -21,7 +21,12 @@ public class Player : NetworkBehaviour
 
         if (IsOwner) //owner stuff
         {
-            username.Value = MainMenu.Instance.GetLocalUserName();
+            string _userName = MainMenu.Instance.GetLocalUserName();
+            if (_userName == "")
+            {
+                _userName = "Guest";
+            }
+            username.Value = _userName;
         }
     }
 

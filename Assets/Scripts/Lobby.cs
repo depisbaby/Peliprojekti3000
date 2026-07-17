@@ -54,13 +54,12 @@ public class Lobby : NetworkBehaviour
     {
         if (!IsServer) return; 
 
-        players.Add(player.OwnerClientId, player);
-
         while (player.username.Value == default(string)) //wait until the owner of the player sets the user name
         {
             await Task.Yield();
         }
 
+        players.Add(player.OwnerClientId, player);
         SendChatMessageClientRpc("[SYSTEM]: "+ player.username.Value+ " joined the game!");
     }
 
