@@ -28,6 +28,9 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
 
+    public bool isGameStarted;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,8 +40,20 @@ public class GameManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
 
+    }
+    
+    //Entry point of the game
+    //This gets called when all of the players in game have pressed the ready button in the lobby screen
+    //
+    public void StartGame()
+    {
+        if (!IsServer) return; //server only
+        if (isGameStarted) return;
+        isGameStarted = true;
+        Lobby.Instance.SendChatMessageClientRpc("Everyone is ready!");
+
+
+    }
     
 }

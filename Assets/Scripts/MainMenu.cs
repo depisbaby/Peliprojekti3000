@@ -50,6 +50,7 @@ public class MainMenu : MonoBehaviour
         return usernameField.text;
     }
 
+
     public void CloseUI()
     {
         uiBase.SetActive(false);
