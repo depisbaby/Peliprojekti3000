@@ -107,7 +107,7 @@ public class GameManager : NetworkBehaviour
     {
         switch (tag)
         {
-            case "gamestart":
+            case "gamestart"://sent when the game starts
                 Lobby.Instance.CloseUI();
                 return;
             default: return;
