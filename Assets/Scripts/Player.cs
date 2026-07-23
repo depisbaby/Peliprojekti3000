@@ -7,7 +7,7 @@ using Unity.Netcode;
 using Unity.Collections;
 using WebSocketSharp;
 using Unity.VisualScripting;
-using UnityEditor.PackageManager;
+//using UnityEditor.PackageManager;
 
 
 public class Player : NetworkBehaviour

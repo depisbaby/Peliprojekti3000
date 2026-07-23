@@ -83,6 +83,11 @@ public class Lobby : NetworkBehaviour
         uiBase.SetActive(true); //open lobby ui
     }
 
+    public void CloseUI()
+    {
+        uiBase.SetActive(false);
+    }
+
     public async void AddNewPlayer(Player player) //when a new player prefab is spawned, this adds the player into the game
     {
         if (!IsServer) return; //server only
