@@ -58,7 +58,7 @@ public class GameManager : NetworkBehaviour
         public BoardTile[,] map;
 
         /// <summary>
-        /// retruns adjacent tiles to the given tile. Only returns existing tiles \Peliprojekti3000\Documentation\tiling_diagram.png for tiling reference
+        /// retruns adjacent tiles to the tile at given pos. Only returns existing tiles \Peliprojekti3000\Documentation\tiling_diagram.png for tiling reference
         /// </summary>
         /// <param name="tile"></param>
         /// <returns>returns a list of adjacent tiles. arbitrary length of max 6</returns>
@@ -157,7 +157,7 @@ public class GameManager : NetworkBehaviour
         }
 
         /// <summary>
-        /// convert from an integer position on the map to a corresponding grid position according to \Peliprojekti3000\Documentation\tiling_diagram.png
+        /// convert from an integer position on the map to a corresponding vector2 position according to \Peliprojekti3000\Documentation\tiling_diagram.png
         /// </summary>
         /// <param name="mapPos"></param>
         /// <returns></returns>
@@ -169,7 +169,10 @@ public class GameManager : NetworkBehaviour
             return (right * (mapPos.x - (mapPos.y / 2))) + (down * mapPos.y);
         }
     }
-
+    
+    /// <summary>
+    /// a single tile of the gameboard
+    /// </summary>
     [System.Serializable]
     public class BoardTile {
 
