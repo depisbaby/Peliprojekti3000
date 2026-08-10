@@ -13,6 +13,7 @@ using UnityEditor;
 using UnityEngine.Playables;
 using Unity.Collections;
 
+[System.Serializable]
 public class GameManager : NetworkBehaviour
 {
     #region Singleton
@@ -33,6 +34,7 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
 
+
     public bool isGameStarted;
     public SharableGameState sharableGameState;
 
@@ -40,7 +42,8 @@ public class GameManager : NetworkBehaviour
     //A large portion, if not all, of the game state is tracked as a "SharableGameState" struct.
     //Things such as player unit positions, unit combat values, tile statuses, turn number etc. are all tracked here.
     //The the game state can be synced by calling SyncSharableGameState().
-    public struct SharableGameState : INetworkSerializable
+    [System.Serializable]
+    public class SharableGameState
     {
         //the current turn number
         public int turnNumber;
@@ -48,21 +51,25 @@ public class GameManager : NetworkBehaviour
         //the width and the height of the map
         public int mapSize;
 
-        //The representation of the tiles on the map. Using 2D array didn't work with the NetworkSerialize. Use Vector2ToArrayIndex() to convert 2D position into 1D index.
-        //The map is not going to be big (maybe 19x19 max) so this is fine.
-        //See \Peliprojekti3000\Documentation\tiling_diagram.png
-        //0=no tile
-        //1=normal tile
-        //2=forest tile
-        public int[] map;
+        /// <summary>
+        /// tiles of the map.
+        /// See \Peliprojekti3000\Documentation\tiling_diagram.png for visualisation of their arrangement
+        /// </summary>
+        public BoardTile[][] map;
+    }
 
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer)
-            where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref turnNumber);
-            serializer.SerializeValue(ref mapSize);
-            serializer.SerializeValue(ref map);
-        }
+    [System.Serializable]
+    public class BoardTile {
+
+        /// <summary>
+        /// 
+        /// type of tile on the map. 
+        /// 0=no tile
+        /// 1=normal tile      
+        /// 2=forest tile     
+        /// </summary>
+        int type;
+
     }
 
     //Entry point of the game
@@ -74,8 +81,15 @@ public class GameManager : NetworkBehaviour
         isGameStarted = true;
         Lobby.Instance.SendChatMessageClientRpc("Everyone is ready!");
         SendSimpleEventClientRpc("gamestart");
-        
 
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            SyncSharableGameState();
+        }
     }
 
     /// <summary>
@@ -87,17 +101,19 @@ public class GameManager : NetworkBehaviour
 
         //TODO MAYBE: Each client should be sent a different version of the game state depending on hidden information (such as hidden units, and fog of war) to prevent cheating.
         //It depends of whether we care if players cheat or not in a friend-slop game.
-       
 
-        SyncSharableGameStateClientRpc(sharableGameState); //as of now every client is sent the same game state
+
+        SyncSharableGameStateClientRpc(ObjectSerialization.SerializeToByteArray(sharableGameState)); //as of now every client is sent the same game state
     }
 
     [ClientRpc]
-    void SyncSharableGameStateClientRpc(SharableGameState state)
+    void SyncSharableGameStateClientRpc(byte[] state)
     {
+        SharableGameState NewState = ObjectSerialization.Deserialize<SharableGameState>(state);
+
         if (IsServer) return;//just in case lol
-        sharableGameState = state;//set the game state variable of the clients just in case
-        GameBoard.Instance.SyncGameState(state); //sync game board
+        sharableGameState = NewState;//set the game state variable of the clients just in case
+        GameBoard.Instance.SyncGameState(NewState); //sync game board
     }
 
     /// <summary>
