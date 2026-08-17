@@ -5,13 +5,18 @@
 //
 
 
-using UnityEngine;
-using Unity.Netcode;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using System;
-using UnityEditor;
-using UnityEngine.Playables;
+using System.Collections.Generic;
 using Unity.Collections;
+using Unity.Netcode;
+using Unity.VisualScripting;
+using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
+using UnityEngine.Playables;
+using static GameManager;
+using GameState;
 
 [System.Serializable]
 public class GameManager : NetworkBehaviour
@@ -38,162 +43,6 @@ public class GameManager : NetworkBehaviour
     public bool isGameStarted;
     public SharableGameState sharableGameState;
 
-    //IMPORTANT!!!
-    //A large portion, if not all, of the game state is tracked as a "SharableGameState" struct.
-    //Things such as player unit positions, unit combat values, tile statuses, turn number etc. are all tracked here.
-    //The the game state can be synced by calling SyncSharableGameState().
-    [System.Serializable]
-    public class SharableGameState
-    {
-        //the current turn number
-        public int turnNumber;
-
-        //the width and the height of the map
-        public int mapSize;
-
-        /// <summary>
-        /// tiles of the map.
-        /// See \Peliprojekti3000\Documentation\tiling_diagram.png for visualisation of their arrangement
-        /// </summary>
-        public BoardTile[,] map;
-
-        /// <summary>
-        /// retruns adjacent tiles to the tile at given pos. Only returns existing tiles \Peliprojekti3000\Documentation\tiling_diagram.png for tiling reference
-        /// </summary>
-        /// <param name="tile"></param>
-        /// <returns>returns a list of adjacent tiles. arbitrary length of max 6</returns>
-        public List<BoardTile> GetAdjacentTiles(Vector2Int position) { 
-
-            
-            List<BoardTile> result = new List<BoardTile>();
-
-            BoardTile t;
-            t = getTile(position + new Vector2Int(1, 0));
-            if (t != null) { result.Add(t); }
-
-            t = getTile(position + new Vector2Int(0, 1));
-            if (t != null) { result.Add(t); }
-
-            t = getTile(position + new Vector2Int(-1, 0));
-            if (t != null) { result.Add(t); }
-
-            t = getTile(position + new Vector2Int(0, -1));
-            if (t != null) { result.Add(t); }
-
-            //gets adjacent tiles in directions that are diagonal on a square grid. these alternate to account for the way the map is laid out (\Peliprojekti3000\Documentation\tiling_diagram.png)
-            if (position.y % 2 == 0)
-            {
-                t = getTile(position + new Vector2Int(-1, 1));
-                if (t != null) { result.Add(t); }
-
-                t = getTile(position + new Vector2Int(-1, -1));
-                if (t != null) { result.Add(t); }
-            }
-            else {
-                t = getTile(position + new Vector2Int(1, 1));
-                if (t != null) { result.Add(t); }
-
-                t = getTile(position + new Vector2Int(1, -1));
-                if (t != null) { result.Add(t); }
-            }
-                
-
-
-
-            return result;
-
-            //local method to make getting a single tile easier
-            BoardTile getTile(Vector2Int position) {
-   
-                //retrun null if position is out of bounds
-                if (position.x < 0 || position.y < 0 || position.x >= map.GetLength(0) || position.y >= map.GetLength(1))
-                    return null;
-
-                BoardTile t = map[position.x, position.y];
-
-                return t;
-            }
-        }
-
-        /// <summary>
-        /// create a map of size Xsize, Ysize
-        /// </summary>
-        /// <param name="Xsize"></param>
-        /// <param name="Ysize"></param>
-        public void createMap(int Xsize, int Ysize) {
-            map = new BoardTile[Xsize, Ysize];
-
-            for (int x = 0; x < map.GetLength(0); x++)
-            {
-                for (int y = 0; y < map.GetLength(1); y++)
-                {
-                    map[x,y] = new BoardTile(new Vector2Int(x,y));
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// draw the maps connections as a set of lines for debug purposes
-        /// </summary>
-        public void debugDrawMap() {
-            Vector2[,] points = new Vector2[map.GetLength(0), map.GetLength(1)];
-
-            foreach (BoardTile tile in map) {
-
-                Vector2Int tilepos = new Vector2Int(tile.positionX, tile.positionY);
-
-                Vector2 point = MapToWorldPos(tilepos);
-
-                foreach (BoardTile nextTile in GetAdjacentTiles(tilepos)) { 
-
-                    Vector2Int nextTilepos = new Vector2Int(nextTile.positionX, nextTile.positionY);
-
-                    Debug.DrawLine(point, MapToWorldPos(nextTilepos), Color.red);
-                }
-            }
-
-
-        }
-
-        /// <summary>
-        /// convert from an integer position on the map to a corresponding vector2 position according to \Peliprojekti3000\Documentation\tiling_diagram.png
-        /// </summary>
-        /// <param name="mapPos"></param>
-        /// <returns></returns>
-        Vector2 MapToWorldPos(Vector2Int mapPos)
-        {
-            Vector2 right = Vector2.right;
-            Vector2 down = Vector2.down + (Vector2.right * 0.5f);
-
-            return (right * (mapPos.x - (mapPos.y / 2))) + (down * mapPos.y);
-        }
-    }
-    
-    /// <summary>
-    /// a single tile of the gameboard
-    /// </summary>
-    [System.Serializable]
-    public class BoardTile {
-
-        public BoardTile(Vector2Int _position) {
-            type = 1;
-            positionX = _position.x;
-            positionY = _position.y;
-        }
-
-        /// <summary>
-        /// 
-        /// type of tile on the map. 
-        /// 0=no tile
-        /// 1=normal tile      
-        /// 2=forest tile     
-        /// </summary>
-        public int type;
-
-        public int positionX;
-        public int positionY;
-    }
 
     //Entry point of the game
     //This gets called when all of the players in game have pressed the ready button in the lobby screen
@@ -206,6 +55,10 @@ public class GameManager : NetworkBehaviour
         SendSimpleEventClientRpc("gamestart");
 
         sharableGameState.createMap(7,7);
+        sharableGameState.Units.Add(new BoardUnit(1, new Vector2Int(3,3)));
+        sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5,3)));
+        sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3,6)));
+
         SyncSharableGameState();
     }
 
@@ -213,6 +66,33 @@ public class GameManager : NetworkBehaviour
     {
         //debug stuff        
         sharableGameState.debugDrawMap();
+
+        if (Input.GetKeyDown(KeyCode.W)) {
+            foreach (BoardUnit u in sharableGameState.Units) {
+                sharableGameState.MoveUnit(u, new Vector2Int(0, -1));
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            foreach (BoardUnit u in sharableGameState.Units)
+            {
+                sharableGameState.MoveUnit(u, new Vector2Int(-1, 0));
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            foreach (BoardUnit u in sharableGameState.Units)
+            {
+                sharableGameState.MoveUnit(u, new Vector2Int(0, 1));
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            foreach (BoardUnit u in sharableGameState.Units)
+            {
+                sharableGameState.MoveUnit(u, new Vector2Int(1, 0));
+            }
+        }
     }
 
     /// <summary>
@@ -261,5 +141,31 @@ public class GameManager : NetworkBehaviour
     public int Vector2ToArrayIndex(Vector2 position, int mapSize)
     {
         return (int)position.x + (int)position.y * mapSize;
+    }
+
+    private void OnDrawGizmos()
+    {
+
+        foreach (BoardTile tile in sharableGameState.map)
+        {
+
+            Vector2Int tilepos = new Vector2Int(tile.positionX, tile.positionY);
+
+            Vector2 point = sharableGameState.MapToWorldPos(tilepos);
+
+            foreach (BoardTile nextTile in sharableGameState.GetAdjacentTiles(tilepos))
+            {
+
+                Vector2Int nextTilepos = new Vector2Int(nextTile.positionX, nextTile.positionY);
+
+                Debug.DrawLine(point, sharableGameState.MapToWorldPos(nextTilepos), Color.red);
+            }
+        }
+
+        Gizmos.color = Color.green;
+        foreach (BoardUnit u in sharableGameState.Units)
+        {
+            Gizmos.DrawWireSphere(sharableGameState.MapToWorldPos(u.GetPosition()), Mathf.Sqrt(u.Size) * 0.1f);            
+        }
     }
 }

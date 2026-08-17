@@ -4,6 +4,7 @@
 //Lets try to keep this local only lol
 
 using UnityEngine;
+using GameState;
 
 public class GameBoard : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class GameBoard : MonoBehaviour
 
     //Is called everytime the game state is synced in GameManager.
     //Syncs the game state. Moves units, updates combat values etc.
-    public void SyncGameState(GameManager.SharableGameState gameState)
+    public void SyncGameState(SharableGameState gameState)
     {
 
     }
