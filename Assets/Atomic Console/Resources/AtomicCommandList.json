@@ -1,6 +1,13 @@
 {
     "Commands": [
         {
+            "Name": "MoveAllUp",
+            "Description": "",
+            "TypeField": "",
+            "Locked": false,
+            "StaticMethod": false
+        },
+        {
             "Name": "Close",
             "Description": "Close console",
             "TypeField": "",

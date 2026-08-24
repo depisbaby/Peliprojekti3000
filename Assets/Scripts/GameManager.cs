@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using static GameManager;
 using GameState;
+using AtomicConsole;
 
 [System.Serializable]
 public class GameManager : NetworkBehaviour
@@ -92,6 +93,15 @@ public class GameManager : NetworkBehaviour
             {
                 sharableGameState.MoveUnit(u, new Vector2Int(1, 0));
             }
+        }
+    }
+
+    [AtomicCommand(name: "MoveAllUp", description: "Move all units up 1 tile")]
+    public void MoveAllUp()
+    {
+        foreach (BoardUnit u in sharableGameState.Units)
+        {
+            sharableGameState.MoveUnit(u, new Vector2Int(0, -1));
         }
     }
 

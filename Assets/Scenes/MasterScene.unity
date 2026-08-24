@@ -6258,6 +6258,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862545246}
   m_CullTransparentMesh: 1
+--- !u!1 &898562518
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 898562520}
+  - component: {fileID: 898562519}
+  m_Layer: 0
+  m_Name: console
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &898562519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898562518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e52f35519d4f7246b24da3f3f05c1a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AtomicConsole.Engine.AtomicConsoleEngine
+  skin: {fileID: 0}
+  invidiualLogs: 0
+  SleepMode: 0
+  AlwaysOnFocus: 0
+  dontDestroyOnLoad: 0
+  ToggleConsoleInput: 13
+  password_Protected: 0
+  password: 
+  isLocked: 1
+  consoleLogs: []
+  scrollPos: {x: 0, y: 0}
+  scrollPosSmoothnes: 0.3
+  isVisible: 0
+  inputText: 
+  Diagnostic: 0
+  logsChanged: 0
+  concatenatedLogs: 
+  actualPassword: 
+--- !u!4 &898562520
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898562518}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.46825, y: -3.08012, z: 14.63153}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &921118835
 GameObject:
   m_ObjectHideFlags: 0
@@ -6915,63 +6977,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1024978237}
   m_CullTransparentMesh: 1
---- !u!1001 &1107673895
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.03733
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -8.01551
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 25.63866
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5068751580795060993, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7753228075697300398, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
-      propertyPath: m_Name
-      value: Atomic_Console
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7892b8ef9460cb0449fdc65a7e22eb0a, type: 3}
 --- !u!1 &1144538096
 GameObject:
   m_ObjectHideFlags: 0
@@ -8722,4 +8727,4 @@ SceneRoots:
   - {fileID: 1762527115}
   - {fileID: 294579219}
   - {fileID: 1156636850}
-  - {fileID: 1107673895}
+  - {fileID: 898562520}
