@@ -52,23 +52,13 @@ namespace GameState {
             t = getTile(position + new Vector2Int(0, -1));
             if (t != null) { result.Add(t); }
 
-            //gets adjacent tiles in directions that are diagonal on a square grid. these alternate to account for the way the map is laid out (\Peliprojekti3000\Documentation\tiling_diagram.png)
-            if (position.y % 2 == 0)
-            {
-                t = getTile(position + new Vector2Int(-1, 1));
-                if (t != null) { result.Add(t); }
+            //gets adjacent tiles in directions that are diagonal on a square grid.
+            t = getTile(position + new Vector2Int(-1, 1));
+            if (t != null) { result.Add(t); }
 
-                t = getTile(position + new Vector2Int(-1, -1));
-                if (t != null) { result.Add(t); }
-            }
-            else
-            {
-                t = getTile(position + new Vector2Int(1, 1));
-                if (t != null) { result.Add(t); }
-
-                t = getTile(position + new Vector2Int(1, -1));
-                if (t != null) { result.Add(t); }
-            }
+            t = getTile(position + new Vector2Int(1, -1));
+            if (t != null) { result.Add(t); }
+            
 
             return result;
 
@@ -150,7 +140,7 @@ namespace GameState {
             Vector2 right = Vector2.right;
             Vector2 down = Vector2.down + (Vector2.right * 0.5f);
 
-            return (right * (mapPos.x - (mapPos.y / 2))) + (down * mapPos.y);
+            return (right * mapPos.x) + (down * mapPos.y);
         }
     }
 }

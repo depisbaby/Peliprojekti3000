@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using static GameManager;
 using GameState;
+using AtomicConsole;
 
 [System.Serializable]
 public class GameManager : NetworkBehaviour
@@ -95,6 +96,15 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [AtomicCommand(name: "MoveAllUp", description: "Move all units up 1 tile")]
+    public void MoveAllUp()
+    {
+        foreach (BoardUnit u in sharableGameState.Units)
+        {
+            sharableGameState.MoveUnit(u, new Vector2Int(0, -1));
+        }
+    }
+
     /// <summary>
     /// Syncs the current game state with the clients. Call on server only.
     /// </summary>
@@ -145,6 +155,8 @@ public class GameManager : NetworkBehaviour
 
     private void OnDrawGizmos()
     {
+        if (sharableGameState.map == null)
+            return;
 
         foreach (BoardTile tile in sharableGameState.map)
         {
