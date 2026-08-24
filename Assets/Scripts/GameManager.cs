@@ -145,6 +145,8 @@ public class GameManager : NetworkBehaviour
 
     private void OnDrawGizmos()
     {
+        if (sharableGameState.map == null)
+            return;
 
         foreach (BoardTile tile in sharableGameState.map)
         {
