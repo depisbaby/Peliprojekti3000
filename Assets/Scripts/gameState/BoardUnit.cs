@@ -12,7 +12,7 @@ namespace GameState
         public int Size = 1;
         public int X;
         public int Y;
-        //TODO: mark the owner of the unit
+        public int ownerId;
 
         public BoardUnit(int size, Vector2Int Position)
         {

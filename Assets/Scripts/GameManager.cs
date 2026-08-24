@@ -116,7 +116,7 @@ public class GameManager : NetworkBehaviour
 
         if (IsServer) return;//just in case lol
         sharableGameState = NewState;//set the game state variable of the clients just in case
-        GameBoard.Instance.SyncGameState(NewState); //sync game board
+        LocalGameBoard.Instance.SyncGameState(NewState); //sync local game board
     }
 
     /// <summary>
@@ -162,7 +162,7 @@ public class GameManager : NetworkBehaviour
             }
         }
 
-        Gizmos.color = Color.green;
+        //Gizmos.color = Color.green;
         foreach (BoardUnit u in sharableGameState.Units)
         {
             Gizmos.DrawWireSphere(sharableGameState.MapToWorldPos(u.GetPosition()), Mathf.Sqrt(u.Size) * 0.1f);            
