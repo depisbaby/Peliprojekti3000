@@ -7093,6 +7093,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4687fbd57b5fd83419b1e4cc30653e54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBoard
+  localTilePrefab: {fileID: 2355840622688330766, guid: 652b2d2d4299eff4ab356dc0b634d359, type: 3}
+  unitPrefab: {fileID: 0}
 --- !u!1 &1172049726
 GameObject:
   m_ObjectHideFlags: 0

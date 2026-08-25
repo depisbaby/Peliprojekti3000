@@ -12,7 +12,9 @@ namespace GameState
         public int Size = 1;
         public int X;
         public int Y;
-        public int ownerId;
+
+        public int ownerId; //TODO Needs to be assigned. Units owned by player 1 has ownerId=1 etc.
+        public int globalId; //TODO Needs to be assigned. Global id may never be repeated. (maybe just increment the int forever?)
 
         public BoardUnit(int size, Vector2Int Position)
         {

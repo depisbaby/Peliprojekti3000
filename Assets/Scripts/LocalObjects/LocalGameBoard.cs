@@ -6,6 +6,8 @@
 using UnityEngine;
 using GameState;
 using System.Runtime.InteropServices.WindowsRuntime;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public class LocalGameBoard : MonoBehaviour
 {
@@ -28,13 +30,15 @@ public class LocalGameBoard : MonoBehaviour
     #endregion
 
     [SerializeField] private LocalTile localTilePrefab;
+    [SerializeField] private LocalTile unitPrefab;
     public LocalTile[,] localMap;
     int mapSize;
-
+    List<LocalUnit> localUnits = new List<LocalUnit>();
+    
 
     private void Start()
     {
-        InitLocalMap(20);
+        //InitLocalMap(20);
     }
 
     //Is called everytime the game state is synced in GameManager.
@@ -56,6 +60,7 @@ public class LocalGameBoard : MonoBehaviour
         }
 
         //Todo sync units
+        SyncUnits(gameState);
 
         //todo sync what ever the fuk
     }
@@ -66,6 +71,49 @@ public class LocalGameBoard : MonoBehaviour
         if (localTile.type == serverTile.type) return; // tiles already in sync
         SetTileType(localTile,serverTile.type);
 
+    }
+
+    //sync all local units
+    void SyncUnits(SharableGameState gameState)
+    {
+        //code feels verys stupid but its prolly fine.
+
+        List<BoardUnit> serverUnits = new List<BoardUnit>(); //add server to a new list where they can be removed along the way
+        foreach (BoardUnit serverUnit in gameState.Units)
+        {
+            serverUnits.Add(serverUnit);
+        }
+
+        foreach (var localUnit in localUnits) //go through each local unit
+        {
+            bool found = false;
+            foreach (var serverUnit in serverUnits)// go through each server unit
+            {
+                if (serverUnit.globalId == localUnit.globalId)//unit still exists on the gameboard
+                {
+                    SyncUnitState(localUnit, serverUnit);//sync the unit
+                    found = true;
+                    serverUnits.Remove(serverUnit);
+                    break;
+                }
+            }
+
+            if (found) continue;
+
+            //local unit no longer exists according to server
+            DespawnUnit(localUnit);
+
+        }
+
+        if(serverUnits.Count > 0) //there are new units that need to be spawned locally
+        {
+
+        }
+    }
+
+    void SyncUnitState(LocalUnit localUnit, BoardUnit serverUnit)
+    {
+        //TODO sync position
     }
 
     //set the local type of the tile
@@ -90,5 +138,23 @@ public class LocalGameBoard : MonoBehaviour
             }
         }
     }
+
+    void SpawnUnit(
+        int ownerId,
+        int globalId,
+        Vector2 gridPosition
+        )
+    {
+        
+    }
+
+    void DespawnUnit(LocalUnit localUnit)
+    {
+        //TODO some sort of death animation
+
+        localUnits.Remove(localUnit);
+        Destroy(localUnit.gameObject);
+    }
+
 
 }
