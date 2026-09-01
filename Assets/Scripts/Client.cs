@@ -10,7 +10,7 @@ using Unity.VisualScripting;
 //using UnityEditor.PackageManager;
 
 
-public class Player : NetworkBehaviour
+public class Client : NetworkBehaviour
 {
     //THE username to refer to
     public NetworkVariable<FixedString128Bytes> username = new NetworkVariable<FixedString128Bytes>(
@@ -33,7 +33,7 @@ public class Player : NetworkBehaviour
     {
         if (IsServer) //server stuff
         {
-            Lobby.Instance.AddNewPlayer(this);
+            Lobby.Instance.AddNewClient(this);
         }
 
         if (IsOwner) //owner stuff
@@ -55,7 +55,7 @@ public class Player : NetworkBehaviour
     {
         if (IsServer) //server stuff
         {
-            Lobby.Instance.RemovePlayer(this);
+            Lobby.Instance.RemoveClient(this);
         }
     }
 

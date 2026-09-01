@@ -43,6 +43,7 @@ public class GameManager : NetworkBehaviour
 
     public bool isGameStarted;
     public SharableGameState sharableGameState;
+    
 
 
     //Entry point of the game
@@ -54,13 +55,36 @@ public class GameManager : NetworkBehaviour
         isGameStarted = true;
         Lobby.Instance.SendChatMessageClientRpc("Everyone is ready!");
         SendSimpleEventClientRpc("gamestart");
-
+        
         sharableGameState.createMap(7,7);
         sharableGameState.Units.Add(new BoardUnit(1, new Vector2Int(3,3)));
         sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5,3)));
         sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3,6)));
-
         SyncSharableGameState();
+        
+        //1. Do stuff at the beginning of the game
+
+        while (true)
+        {
+            //2. Do stuff at the beginning of the round.
+            sharableGameState.turnNumber++; //increment turn number
+
+            //3. Set timer for players to move stuff (~30-60sec) AND constantly check player "pass status"
+
+            //4. Get player moves and apply them.
+
+            //5. Sync state and set a small move animation timer (~5-10sec)
+
+            //6. Get each players standing towards each other player and resolve battles accordingly
+
+            //7. Sync state and set a small battle animation timer (~5-10sec)
+
+            //8. Do stuff at the end of the round
+
+        }
+
+        //9. Do stuff at the end of the game
+
     }
 
     private void Update()

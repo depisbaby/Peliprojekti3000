@@ -34,19 +34,19 @@ public class Lobby : NetworkBehaviour
     #endregion
 
     //display-ready, long string of the connected players and their readiness status, that can be read by the clients
-    public NetworkVariable<FixedString4096Bytes> playerList = new NetworkVariable<FixedString4096Bytes>(
+    public NetworkVariable<FixedString4096Bytes> clientList = new NetworkVariable<FixedString4096Bytes>(
     default,
     NetworkVariableReadPermission.Everyone,
     NetworkVariableWritePermission.Server
     );
 
-    public Player localPlayer; //A reference to the local player object
-    private Dictionary<ulong,Player> players = new Dictionary<ulong,Player>();// the main dictionary that tracks player in joined
+    public Client localPlayer; //A reference to the local player object
+    private Dictionary<ulong,Client> clients = new Dictionary<ulong,Client>();// the main dictionary that tracks player in joined
     [SerializeField] GameObject uiBase; //base object of the ui elements 
     [SerializeField] TMP_Text chat; 
     [SerializeField] TMP_InputField chatInput;
     [SerializeField] TMP_Text readyButtonText;
-    [SerializeField] TMP_Text playersInLobbyText;
+    [SerializeField] TMP_Text playersInLobbyText; //wrong naming should be "client"
     bool isLocalReady;
     ushort tick;
 
@@ -88,7 +88,7 @@ public class Lobby : NetworkBehaviour
         uiBase.SetActive(false);
     }
 
-    public async void AddNewPlayer(Player player) //when a new player prefab is spawned, this adds the player into the game
+    public async void AddNewClient(Client player) //when a new player prefab is spawned, this adds the player into the game
     {
         if (!IsServer) return; //server only
 
@@ -97,7 +97,7 @@ public class Lobby : NetworkBehaviour
             await Task.Yield();
         }
 
-        players.Add(player.OwnerClientId, player);//add to the player dict
+        clients.Add(player.OwnerClientId, player);//add to the player dict
         SendChatMessageClientRpc("[SYSTEM]: "+ player.username.Value+ " joined the game!"); //send notification to other players
 
         if (GameManager.Instance.isGameStarted)//is game already running
@@ -107,10 +107,10 @@ public class Lobby : NetworkBehaviour
 
     }
 
-    public void RemovePlayer(Player player)
+    public void RemoveClient(Client player)
     {
         SendChatMessageClientRpc("[SYSTEM]: " + player.username.Value + " left the game!");
-        players.Remove(player.OwnerClientId);
+        clients.Remove(player.OwnerClientId);
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ public class Lobby : NetworkBehaviour
         if (GameManager.Instance.isGameStarted) return;
 
         bool _ready = true;
-        foreach (var player in players)
+        foreach (var player in clients)
         {
             if (!player.Value.ready.Value)
             {
@@ -153,14 +153,14 @@ public class Lobby : NetworkBehaviour
     }
 
     //updates the display-ready playerlist network variable
-    void UpdatePlayersInLobby()
+    void UpdateClientsInLobby()
     {
-        playersInLobbyText.text = "Players in lobby: \n" + playerList.Value.ToString(); //happens on every client
+        playersInLobbyText.text = "Players in lobby: \n" + clientList.Value.ToString(); //happens on every client
 
         if (!IsServer) return; //server only, updates the network variable
 
         string list="";
-        foreach (var player in players)
+        foreach (var player in clients)
         {
             string readiness;
             if (player.Value.ready.Value)
@@ -174,7 +174,7 @@ public class Lobby : NetworkBehaviour
 
             list = list + "[" + readiness + "] " + player.Value.username.Value + "\n";
         }
-        playerList.Value = list;
+        clientList.Value = list;
         
     }
 
