@@ -21,12 +21,16 @@ namespace GameState {
         /// </summary>
         public BoardTile[,] map;
 
-
         /// <summary>
         /// units on the map
         /// See \Peliprojekti3000\Documentation\tiling_diagram.png for visualisation of their arrangement
         /// </summary>
         public List<BoardUnit> Units = new List<BoardUnit>();
+
+        /// <summary>
+        /// List of the players in game. The number of players shouldn't ever change throughout the game even though clients may disconnect. Clients are bound to be Players' "controllers" as the game begins/they reconnect.
+        /// </summary>
+        public List<Player> Players = new List<Player>();
 
         /// <summary>
         /// retruns adjacent tiles to the tile at given pos. Only returns existing tiles \Peliprojekti3000\Documentation\tiling_diagram.png for tiling reference

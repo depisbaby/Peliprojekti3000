@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ClientGameActionHandler : NetworkBehaviour
 {
-    public ClientGameActionState localClientActionState;
-    public bool localCanTakeActions;
+    [HideInInspector] public ClientGameActionState localClientActionState;
 
     /// <summary>
     /// Called from server to request clients to send their current game actions via SendPlayerActionStateServerRpc(byte[] data)

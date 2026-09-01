@@ -61,8 +61,13 @@ public class GameManager : NetworkBehaviour
         sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5,3)));
         sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3,6)));
         SyncSharableGameState();
-        
+
         //1. Do stuff at the beginning of the game
+
+        foreach (var client in Lobby.Instance.clients) // create player objects for each player
+        {
+            BindClientToPlayer(client.Value, true);
+        }
 
         while (true)
         {
@@ -175,6 +180,39 @@ public class GameManager : NetworkBehaviour
     public int Vector2ToArrayIndex(Vector2 position, int mapSize)
     {
         return (int)position.x + (int)position.y * mapSize;
+    }
+
+    /// <summary>
+    /// Gets called on each connected client when the game starts and when a client reconnects to a game.
+    /// </summary>
+    /// <param name="client">The client you want the player bind to</param>
+    /// <param name="canCreateNewPlayers">Weather this can create new players. At the start of the game this is true, but during the game this should be false. (New player objects should not be created during the game)</param>
+    void BindClientToPlayer(Client client, bool canCreateNewPlayers)
+    {
+        foreach (var player in sharableGameState.Players) //check if there is already a player object without a controller and bind to it (e.g. when a client is reconnecting to a game)
+        {
+            if (!player.controllerConnected) //this player is missing a controller
+            {
+                //TODO Implement a way for the server to remember each client that has connected before and bind accordingly (using ip?)
+
+                //FOR NOW, bind to first available player object (May lead to situations where two disconnected players may swap their player objects, once they reconnect)
+                player.controllerConnected = true;
+                player.controllerClientId = client.OwnerClientId;
+            }
+        }
+
+        if (!canCreateNewPlayers) //is true when game is starting, false when game is on-going
+        {
+            //TODO handle spectator?
+            return;
+        }
+
+        //create a new player object and bind to it
+        Player newPlayer = new Player();
+        newPlayer.controllerConnected = true;
+        newPlayer.controllerClientId = client.OwnerClientId;
+        sharableGameState.Players.Add(newPlayer);
+
     }
 
     private void OnDrawGizmos()

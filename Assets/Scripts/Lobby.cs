@@ -41,7 +41,7 @@ public class Lobby : NetworkBehaviour
     );
 
     public Client localPlayer; //A reference to the local player object
-    private Dictionary<ulong,Client> clients = new Dictionary<ulong,Client>();// the main dictionary that tracks player in joined
+    public Dictionary<ulong,Client> clients = new Dictionary<ulong,Client>();// the main dictionary that tracks player in joined
     [SerializeField] GameObject uiBase; //base object of the ui elements 
     [SerializeField] TMP_Text chat; 
     [SerializeField] TMP_InputField chatInput;
@@ -66,7 +66,7 @@ public class Lobby : NetworkBehaviour
 
         if (tick % 50 == 0) //happens every now and then
         {
-            UpdatePlayersInLobby();//updates the display-ready player list
+            UpdateClientsInLobby();//updates the display-ready player list
             CheckLobbyReadiness();//server checks if players in lobby are ready
         }
     }
