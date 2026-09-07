@@ -10,6 +10,8 @@ namespace GameState
     {
         public ulong controllerClientId; //the NFGO Client ID of the current controller. Can be used to figure out which of the users control which Player object.
         public bool controllerConnected; //true= controller client is connected in game, false= controller is disconnected from the game.
+
+        public bool playerPassedTurn; 
     }
     
 }

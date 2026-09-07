@@ -4810,6 +4810,7 @@ MonoBehaviour:
     turnNumber: 0
     mapSize: 0
     Units: []
+    Players: []
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -6287,7 +6288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e52f35519d4f7246b24da3f3f05c1a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AtomicConsole.Engine.AtomicConsoleEngine
-  skin: {fileID: 0}
+  skin: {fileID: 11400000, guid: 68bf11788c91a154a9dd1b5294d67684, type: 2}
   invidiualLogs: 0
   SleepMode: 0
   AlwaysOnFocus: 0
@@ -8579,7 +8580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClientGameActionHandler
   ShowTopMostFoldoutHeaderGroup: 1
-  localClientState: {fileID: 0}
+  localClientActionState: {fileID: 0}
 --- !u!1 &1933384538
 GameObject:
   m_ObjectHideFlags: 0

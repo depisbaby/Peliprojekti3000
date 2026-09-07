@@ -104,7 +104,14 @@ namespace GameState {
             }
         }
 
+        public bool AllPlayersPassed() {
+            foreach (Player p in Players) { 
+                if(p.playerPassedTurn == false)
+                    return false;
+            }
 
+            return true;
+        }
 
         /// <summary>
         /// moves an unity on the map by PositionDelta tiles. fails if moving outside the map

@@ -18,6 +18,7 @@ using UnityEngine.Playables;
 using static GameManager;
 using GameState;
 using AtomicConsole;
+using System.Threading.Tasks;
 
 [System.Serializable]
 public class GameManager : NetworkBehaviour
@@ -56,11 +57,7 @@ public class GameManager : NetworkBehaviour
         Lobby.Instance.SendChatMessageClientRpc("Everyone is ready!");
         SendSimpleEventClientRpc("gamestart");
         
-        sharableGameState.createMap(7,7);
-        sharableGameState.Units.Add(new BoardUnit(1, new Vector2Int(3,3)));
-        sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5,3)));
-        sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3,6)));
-        SyncSharableGameState();
+
 
         //1. Do stuff at the beginning of the game
 
@@ -69,26 +66,13 @@ public class GameManager : NetworkBehaviour
             BindClientToPlayer(client.Value, true);
         }
 
-        while (true)
-        {
-            //2. Do stuff at the beginning of the round.
-            sharableGameState.turnNumber++; //increment turn number
+        sharableGameState.createMap(7, 7);
+        sharableGameState.Units.Add(new BoardUnit(1, new Vector2Int(3, 3), 0));
+        sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5, 3), 0));
+        sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3, 6), 0));
+        SyncSharableGameState();
 
-            //3. Set timer for players to move stuff (~30-60sec) AND constantly check player "pass status"
-
-            //4. Get player moves and apply them.
-
-            //5. Sync state and set a small move animation timer (~5-10sec)
-
-            //6. Get each players standing towards each other player and resolve battles accordingly
-
-            //7. Sync state and set a small battle animation timer (~5-10sec)
-
-            //8. Do stuff at the end of the round
-
-        }
-
-        //9. Do stuff at the end of the game
+        RunGame();
 
     }
 
@@ -123,6 +107,59 @@ public class GameManager : NetworkBehaviour
                 sharableGameState.MoveUnit(u, new Vector2Int(1, 0));
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            foreach (Player p in sharableGameState.Players)
+            {
+                p.playerPassedTurn = true;
+            }
+        }
+    }
+
+    async void RunGame() {
+
+        while (true)
+        {
+            //2. Do stuff at the beginning of the round.
+            sharableGameState.turnNumber++; //increment turn number
+            Debug.Log("new round ");
+            Debug.Log("round number " + sharableGameState.turnNumber);
+
+            //3. Set timer for players to move stuff (~30-60sec) AND constantly check player "pass status"
+            int secondsToWait = 60;
+            while (secondsToWait > 0) {
+
+                await Task.Delay(1000);
+                secondsToWait--;
+                Debug.Log("next round in " + secondsToWait);
+
+                if(sharableGameState.AllPlayersPassed()){ 
+                    secondsToWait = 0;
+                    continue;
+                }
+            }
+
+            foreach (Player p in sharableGameState.Players) { 
+                p.playerPassedTurn = false;
+            }
+
+            //4. Get player moves and apply them.
+
+            //5. Sync state and set a small move animation timer (~5-10sec)
+
+            //6. Get each players standing towards each other player and resolve battles accordingly
+
+            //7. Sync state and set a small battle animation timer (~5-10sec)
+
+            //8. Do stuff at the end of the round
+
+            //check if game should end
+            if (false)
+                break;
+        }
+
+        //9. Do stuff at the end of the game
+
     }
 
     [AtomicCommand(name: "MoveAllUp", description: "Move all units up 1 tile")]
