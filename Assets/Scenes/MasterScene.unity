@@ -4809,8 +4809,18 @@ MonoBehaviour:
   sharableGameState:
     turnNumber: 0
     mapSize: 0
+    mapDimensions: 
     Units: []
     Players: []
+  playerColors:
+  - {r: 1, g: 0.3306316, b: 0.3160377, a: 0}
+  - {r: 0.3176471, g: 0.35522178, b: 1, a: 0}
+  - {r: 0.3893381, g: 1, b: 0.3176471, a: 0}
+  - {r: 1, g: 0.90203226, b: 0.3176471, a: 0}
+  - {r: 1, g: 0.3176471, b: 0.9811132, a: 0}
+  - {r: 1, g: 0.61218315, b: 0.3176471, a: 0}
+  - {r: 0.3176471, g: 1, b: 0.9999998, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -4897,13 +4907,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.22194038, y: -0, z: -0, w: 0.9750603}
+  m_LocalPosition: {x: 0, y: 3.6, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 25.646, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5798,7 +5808,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 565, y: -100}
+  m_AnchoredPosition: {x: 315, y: -100}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &779006879
@@ -7094,8 +7104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4687fbd57b5fd83419b1e4cc30653e54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBoard
-  localTilePrefab: {fileID: 2355840622688330766, guid: 652b2d2d4299eff4ab356dc0b634d359, type: 3}
-  unitPrefab: {fileID: 0}
+  localTilePrefab: {fileID: 5454678311146072987, guid: 652b2d2d4299eff4ab356dc0b634d359, type: 3}
+  localUnitPrefab: {fileID: 6533310059765266646, guid: 68d162ee587c2f54a9f6356fe504b173, type: 3}
 --- !u!1 &1172049726
 GameObject:
   m_ObjectHideFlags: 0
@@ -7689,10 +7699,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -8094,7 +8104,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 537, y: -50}
+  m_AnchoredPosition: {x: 287, y: -50}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1688033476

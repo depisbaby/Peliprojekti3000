@@ -44,6 +44,8 @@ public class GameManager : NetworkBehaviour
 
     public bool isGameStarted;
     public SharableGameState sharableGameState;
+
+    [SerializeField] private Color[] playerColors; //colors given to players
     
 
 
@@ -66,10 +68,10 @@ public class GameManager : NetworkBehaviour
             BindClientToPlayer(client.Value, true);
         }
 
-        sharableGameState.createMap(7, 7);
-        sharableGameState.Units.Add(new BoardUnit(1, new Vector2Int(3, 3), 0));
-        sharableGameState.Units.Add(new BoardUnit(2, new Vector2Int(5, 3), 0));
-        sharableGameState.Units.Add(new BoardUnit(3, new Vector2Int(3, 6), 0));
+        sharableGameState.createMap(21, 21);
+        sharableGameState.CreateUnit(5, 5, 0);
+        sharableGameState.CreateUnit(4, 5, 0);
+        sharableGameState.CreateUnit(5, 4, 0); 
         SyncSharableGameState();
 
         RunGame();
@@ -190,7 +192,9 @@ public class GameManager : NetworkBehaviour
     {
         SharableGameState NewState = ObjectSerialization.Deserialize<SharableGameState>(state);
 
-        if (IsServer) return;//just in case lol
+        Debug.LogWarning(state.Length);
+
+        if (!IsClient) return;//just in case lol
         sharableGameState = NewState;//set the game state variable of the clients just in case
         LocalGameBoard.Instance.SyncGameState(NewState); //sync local game board
     }
@@ -235,6 +239,8 @@ public class GameManager : NetworkBehaviour
                 //FOR NOW, bind to first available player object (May lead to situations where two disconnected players may swap their player objects, once they reconnect)
                 player.controllerConnected = true;
                 player.controllerClientId = client.OwnerClientId;
+
+                client.controlledPlayerId.Value = player.playerId; //ASYNC OPERATION!!! SETTING A NETWORK VARIABLE IN CLIENT
             }
         }
 
@@ -245,10 +251,12 @@ public class GameManager : NetworkBehaviour
         }
 
         //create a new player object and bind to it
-        Player newPlayer = new Player();
+        Player newPlayer = new Player(client.OwnerClientId);
         newPlayer.controllerConnected = true;
-        newPlayer.controllerClientId = client.OwnerClientId;
+        newPlayer.SetColor(playerColors[newPlayer.playerId]);//give the player according to their played id. TODO let the players decide in lobby
         sharableGameState.Players.Add(newPlayer);
+
+        client.controlledPlayerId.Value = newPlayer.playerId; //ASYNC OPERATION!!! SETTING A NETWORK VARIABLE IN CLIENT
 
     }
 

@@ -29,10 +29,9 @@ public class LocalGameBoard : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private LocalTile localTilePrefab;
-    [SerializeField] private LocalTile unitPrefab;
+    [SerializeField] private GameObject localTilePrefab;
+    [SerializeField] private GameObject localUnitPrefab;
     public LocalTile[,] localMap;
-    int mapSize;
     List<LocalUnit> localUnits = new List<LocalUnit>();
     
 
@@ -45,9 +44,9 @@ public class LocalGameBoard : MonoBehaviour
     //Syncs the game state. Moves units, updates combat values etc.
     public void SyncGameState(SharableGameState gameState)
     {
-        if (mapSize == 0) //map is not initialized
+        if (localMap == default) //map is not initialized
         {
-            InitLocalMap(mapSize);
+            InitLocalMap(gameState);
         }
 
         //sync tiles
@@ -61,6 +60,8 @@ public class LocalGameBoard : MonoBehaviour
 
         //Todo sync units
         SyncUnits(gameState);
+
+        //Debug.Log("HEP");
 
         //todo sync what ever the fuk
     }
@@ -76,11 +77,12 @@ public class LocalGameBoard : MonoBehaviour
     //sync all local units
     void SyncUnits(SharableGameState gameState)
     {
-        //code feels verys stupid but its prolly fine.
+        //code feels very stupid but its prolly fine.
 
         List<BoardUnit> serverUnits = new List<BoardUnit>(); //add server to a new list where they can be removed along the way
         foreach (BoardUnit serverUnit in gameState.Units)
         {
+
             serverUnits.Add(serverUnit);
         }
 
@@ -107,13 +109,18 @@ public class LocalGameBoard : MonoBehaviour
 
         if(serverUnits.Count > 0) //there are new units that need to be spawned locally
         {
-
+            foreach (var serverUnit in serverUnits)
+            {
+                LocalUnit localUnit = SpawnUnit(serverUnit.ownerId, serverUnit.globalId, serverUnit.GetPosition());
+                SyncUnitState(localUnit, serverUnit);
+            }
         }
     }
 
     void SyncUnitState(LocalUnit localUnit, BoardUnit serverUnit)
     {
         //TODO sync position
+        localUnit.targetPosition = localMap[serverUnit.GetPosition().x, serverUnit.GetPosition().y].gameObject.transform.position + new Vector3(0,3,0);
     }
 
     //set the local type of the tile
@@ -123,13 +130,12 @@ public class LocalGameBoard : MonoBehaviour
     }
 
     //initializes the local game board spawning the hexagons etc.
-    void InitLocalMap(int _mapSize)
+    void InitLocalMap(SharableGameState gameState)
     {
 
-        mapSize = _mapSize;
-        for (int y = 0; y < _mapSize; y++)
+        for (int y = 0; y < gameState.mapDimensions[1]; y++)
         {
-            for (int x = 0; x < _mapSize; x++)
+            for (int x = 0; x < gameState.mapDimensions[0]; x++)
             {
                 GameObject go = Instantiate(localTilePrefab.gameObject);
                 LocalTile localTile = go.GetComponent<LocalTile>();
@@ -139,13 +145,17 @@ public class LocalGameBoard : MonoBehaviour
         }
     }
 
-    void SpawnUnit(
+    LocalUnit SpawnUnit(
         int ownerId,
         int globalId,
         Vector2 gridPosition
         )
     {
-        
+        GameObject go = Instantiate(localUnitPrefab.gameObject);
+        LocalUnit localUnit = go.GetComponent<LocalUnit>();
+        localUnits.Add(localUnit);
+        return localUnit;
+
     }
 
     void DespawnUnit(LocalUnit localUnit)

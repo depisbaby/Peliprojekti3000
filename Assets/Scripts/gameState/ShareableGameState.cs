@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GameState { 
@@ -20,6 +21,11 @@ namespace GameState {
         /// See \Peliprojekti3000\Documentation\tiling_diagram.png for visualisation of their arrangement
         /// </summary>
         public BoardTile[,] map;
+
+        /// <summary>
+        /// Dimensions of the map ({width, height})
+        /// </summary>
+        public int[] mapDimensions;
 
         /// <summary>
         /// units on the map
@@ -93,6 +99,9 @@ namespace GameState {
         /// <param name="Ysize"></param>
         public void createMap(int Xsize, int Ysize)
         {
+            mapDimensions = new int[2];
+            mapDimensions[0] = Xsize;
+            mapDimensions[1] = Ysize;
             map = new BoardTile[Xsize, Ysize];
 
             for (int x = 0; x < map.GetLength(0); x++)
@@ -102,6 +111,29 @@ namespace GameState {
                     map[x, y] = new BoardTile(new Vector2Int(x, y));
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a new unit. Returns null if a player with given id doesn't exist.
+        /// </summary>
+        /// <param name="xPos">Initial X position of the unit</param>
+        /// <param name="yPos">Initial Y position of the unit</param>
+        /// <param name="ownerPlayerId">The id of owner player of the unit</param>
+        /// <returns></returns>
+        public BoardUnit CreateUnit(int xPos, int yPos, int ownerPlayerId)
+        {
+
+            if(ownerPlayerId > Players.Count-1)//Checks if player with given id exists. This way all other systems can assume that player with given id does exists.
+            {
+                Debug.LogError("There is no player with id of " + ownerPlayerId +"!");
+                return null;
+            }
+
+            BoardUnit newUnit = new BoardUnit(1, new Vector2Int(xPos, yPos), ownerPlayerId);
+            Units.Add(newUnit);
+
+            return newUnit; 
+
         }
 
         public bool AllPlayersPassed() {

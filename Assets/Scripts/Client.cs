@@ -26,6 +26,13 @@ public class Client : NetworkBehaviour
     NetworkVariableWritePermission.Owner
     );
 
+    //The player id of the player object this client is controlling
+    public NetworkVariable<int> controlledPlayerId = new NetworkVariable<int>(
+    -1, //default value is -1 to check when the value is changed
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server
+    );
+
 
     //This is called as soon as the player object is spawned on the server.
     //This acts as an entry point for all the needed operations once a new player joins such as adding player to lobby, requesting the username from the client etc.
