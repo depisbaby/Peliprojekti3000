@@ -14,7 +14,7 @@ namespace GameState
 
         public bool playerPassedTurn;
 
-        public int[] playerColor = {0,0,0}; //3 elements for RGB
+        public float[] playerColor = {0.0f, 0.0f, 0.0f }; //3 elements for RGB
 
         static int playerIdCounter;
 
@@ -28,10 +28,18 @@ namespace GameState
 
         public void SetColor(Color color)
         {
-            playerColor[0] = (int)color.r;
-            playerColor[1] = (int)color.g;
-            playerColor[2] = (int)color.b;
+            playerColor[0] = color.r;
+            playerColor[1] = color.g;
+            playerColor[2] = color.b;
         }
+
+        public Color GetColor()
+        {
+            return new Color(playerColor[0], playerColor[1], playerColor[2]);
+           
+        }
+
+
     }
 
     

@@ -185,5 +185,20 @@ namespace GameState {
 
             return (right * mapPos.x) + (down * mapPos.y);
         }
+
+
+        /// <summary>
+        /// Returns player object with given player id from player list 
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        public Player GetPlayerOfId(int playerId)
+        {
+            foreach (var item in Players)
+            {
+                if (item.playerId == playerId) return item;
+            }
+            return null;
+        }
     }
 }

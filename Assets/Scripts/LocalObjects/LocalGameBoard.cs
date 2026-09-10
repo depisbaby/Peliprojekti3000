@@ -3,11 +3,12 @@
 //The physical game board and user interface for selecting units, moving them etc.
 //Lets try to keep this local only lol
 
-using UnityEngine;
 using GameState;
-using System.Runtime.InteropServices.WindowsRuntime;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEngine;
 
 public class LocalGameBoard : MonoBehaviour
 {
@@ -82,7 +83,7 @@ public class LocalGameBoard : MonoBehaviour
         List<BoardUnit> serverUnits = new List<BoardUnit>(); //add server to a new list where they can be removed along the way
         foreach (BoardUnit serverUnit in gameState.Units)
         {
-
+            
             serverUnits.Add(serverUnit);
         }
 
@@ -93,7 +94,7 @@ public class LocalGameBoard : MonoBehaviour
             {
                 if (serverUnit.globalId == localUnit.globalId)//unit still exists on the gameboard
                 {
-                    SyncUnitState(localUnit, serverUnit);//sync the unit
+                    SyncUnitState(localUnit, serverUnit, gameState);//sync the unit
                     found = true;
                     serverUnits.Remove(serverUnit);
                     break;
@@ -109,18 +110,22 @@ public class LocalGameBoard : MonoBehaviour
 
         if(serverUnits.Count > 0) //there are new units that need to be spawned locally
         {
-            foreach (var serverUnit in serverUnits)
+            foreach (BoardUnit serverUnit in serverUnits)
             {
-                LocalUnit localUnit = SpawnUnit(serverUnit.ownerId, serverUnit.globalId, serverUnit.GetPosition());
-                SyncUnitState(localUnit, serverUnit);
+                //Debug.LogWarning("Hep");
+                LocalUnit localUnit = SpawnUnit(serverUnit.ownerPlayerId, serverUnit.globalId, serverUnit.GetPosition());
+                SyncUnitState(localUnit, serverUnit, gameState);
             }
         }
     }
 
-    void SyncUnitState(LocalUnit localUnit, BoardUnit serverUnit)
+    void SyncUnitState(LocalUnit localUnit, BoardUnit serverUnit,SharableGameState gameState)
     {
-        //TODO sync position
-        localUnit.targetPosition = localMap[serverUnit.GetPosition().x, serverUnit.GetPosition().y].gameObject.transform.position + new Vector3(0,3,0);
+        localUnit.targetPosition = localMap[serverUnit.GetPosition().x, serverUnit.GetPosition().y].gameObject.transform.position;
+        Debug.LogWarning(gameState.GetPlayerOfId(serverUnit.ownerPlayerId).GetColor());
+        Debug.LogWarning(localUnit.meshRenderer.material);
+        localUnit.meshRenderer.material.SetColor("_PlayerColor", UnityEngine.Color.red);
+
     }
 
     //set the local type of the tile
@@ -132,6 +137,7 @@ public class LocalGameBoard : MonoBehaviour
     //initializes the local game board spawning the hexagons etc.
     void InitLocalMap(SharableGameState gameState)
     {
+        localMap = new LocalTile[gameState.mapDimensions[0], gameState.mapDimensions[1]];
 
         for (int y = 0; y < gameState.mapDimensions[1]; y++)
         {
@@ -141,6 +147,7 @@ public class LocalGameBoard : MonoBehaviour
                 LocalTile localTile = go.GetComponent<LocalTile>();
                 go.transform.position = new Vector3(x * 1.74f + (y * 0.87f), 0, y * -1.51f);
                 localTile.gridPosition = new Vector2(x,y);
+                localMap[x, y] = localTile;
             }
         }
     }
@@ -154,6 +161,7 @@ public class LocalGameBoard : MonoBehaviour
         GameObject go = Instantiate(localUnitPrefab.gameObject);
         LocalUnit localUnit = go.GetComponent<LocalUnit>();
         localUnits.Add(localUnit);
+        localUnit.transform.position = localMap[(int)gridPosition.x, (int)gridPosition.y].gameObject.transform.position;
         return localUnit;
 
     }

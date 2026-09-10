@@ -13,7 +13,7 @@ namespace GameState
         public int X;
         public int Y;
 
-        public int ownerId; //TODO Needs to be assigned. Units owned by player 1 has ownerId=1 etc.
+        public int ownerPlayerId; //TODO Needs to be assigned. Units owned by player 1 has ownerId=1 etc.
         public int globalId; //TODO Needs to be assigned. Global id may never be repeated. (maybe just increment the int forever?)
 
         static int UnitIDCounter;// static int that gets incremented to have a unique id for all units
@@ -26,7 +26,7 @@ namespace GameState
             Size = size;
             X = Position.x;
             Y = Position.y;
-            ownerId = _ownerId;
+            ownerPlayerId = _ownerId;
         }
 
         public Vector2Int GetPosition()

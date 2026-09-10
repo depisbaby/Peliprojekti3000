@@ -41,6 +41,11 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
 
+    public NetworkVariable<int> timerTick = new NetworkVariable<int>(
+    0, 
+    NetworkVariableReadPermission.Everyone,
+    NetworkVariableWritePermission.Server
+    );
 
     public bool isGameStarted;
     public SharableGameState sharableGameState;
@@ -69,9 +74,9 @@ public class GameManager : NetworkBehaviour
         }
 
         sharableGameState.createMap(21, 21);
-        sharableGameState.CreateUnit(5, 5, 0);
-        sharableGameState.CreateUnit(4, 5, 0);
-        sharableGameState.CreateUnit(5, 4, 0); 
+        sharableGameState.CreateUnit(0, 0, 0);
+        sharableGameState.CreateUnit(2, 2, 0);
+        sharableGameState.CreateUnit(2, 3, 0); 
         SyncSharableGameState();
 
         RunGame();

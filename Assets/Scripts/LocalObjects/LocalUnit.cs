@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class LocalUnit : MonoBehaviour
 {
@@ -8,6 +10,14 @@ public class LocalUnit : MonoBehaviour
     public int ownerId;
 
     public Vector3 targetPosition;
+
+    public MeshRenderer meshRenderer;
+    public Material unitMaterial;
+
+    public void Awake()
+    {
+        meshRenderer.material = new Material(unitMaterial); //create new material instance
+    }
 
     public void Update()
     {
