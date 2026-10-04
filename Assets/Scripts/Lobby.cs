@@ -5,14 +5,14 @@
 //
 
 
-using UnityEngine;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEditor;
-using System.Collections.Generic;
-
-using System.Threading.Tasks;
-using Unity.Collections;
-using TMPro;
+using UnityEditor.PackageManager;
+using UnityEngine;
 public class Lobby : NetworkBehaviour
 {
     #region Singleton
@@ -88,29 +88,34 @@ public class Lobby : NetworkBehaviour
         uiBase.SetActive(false);
     }
 
-    public async void AddNewClient(Client player) //when a new player prefab is spawned, this adds the player into the game
+    public async void AddNewClient(Client client) //when a new player prefab is spawned, this adds the player into the game
     {
         if (!IsServer) return; //server only
 
-        while (player.username.Value == default(string)) //wait until the owner of the player sets the user name
+        while (client.username.Value == default(string)) //wait until the owner of the player sets the user name
         {
             await Task.Yield();
         }
 
-        clients.Add(player.OwnerClientId, player);//add to the player dict
-        SendChatMessageClientRpc("[SYSTEM]: "+ player.username.Value+ " joined the game!"); //send notification to other players
+        clients.Add(client.OwnerClientId, client);//add to the player dict
+        SendChatMessageClientRpc("[SYSTEM]: "+ client.username.Value+ " joined the game!"); //send notification to other players
 
         if (GameManager.Instance.isGameStarted)//is game already running
         {
-            //TODO: Handle reconnections to ongoing game
+            GameManager.Instance.BindClientToPlayer(client, false);
         }
 
     }
 
-    public void RemoveClient(Client player)
+    public void RemoveClient(Client client)
     {
-        SendChatMessageClientRpc("[SYSTEM]: " + player.username.Value + " left the game!");
-        clients.Remove(player.OwnerClientId);
+        SendChatMessageClientRpc("[SYSTEM]: " + client.username.Value + " left the game!");
+        clients.Remove(client.OwnerClientId);
+
+        if (GameManager.Instance.isGameStarted)//is game already running
+        {
+            GameManager.Instance.UnbindClient(client);
+        }
     }
 
     /// <summary>

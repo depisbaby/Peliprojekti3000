@@ -132,15 +132,17 @@ public class GameManager : NetworkBehaviour
             Debug.Log("new round ");
             Debug.Log("round number " + sharableGameState.turnNumber);
 
+            SendSimpleEventClientRpc("ordermoves"); //send clients a signal that they may now make move orders.
+
             //3. Set timer for players to move stuff (~30-60sec) AND constantly check player "pass status"
-            int secondsToWait = 60;
+            int secondsToWait = 10;
             while (secondsToWait > 0) {
 
                 await Task.Delay(1000);
                 secondsToWait--;
                 Debug.Log("next round in " + secondsToWait);
 
-                if(sharableGameState.AllPlayersPassed()){ 
+                if(sharableGameState.AllPlayersPassed()){ //TODO client passing not implemented
                     secondsToWait = 0;
                     continue;
                 }
@@ -151,6 +153,8 @@ public class GameManager : NetworkBehaviour
             }
 
             //4. Get player moves and apply them.
+            Dictionary<ulong, ClientGameActionState> clientActions = await ClientGameActionHandler.Instance.GetClientActions(); //Returns a dict of client actions. The ulong key is the clientId of the client, ClientGameActionState is a serializable blob similar to SharableGameState which describes the actions taken by the client.
+            //Debug.Log("number of clients: " + clientActions.Count);
 
             //5. Sync state and set a small move animation timer (~5-10sec)
 
@@ -197,7 +201,7 @@ public class GameManager : NetworkBehaviour
     {
         SharableGameState NewState = ObjectSerialization.Deserialize<SharableGameState>(state);
 
-        Debug.LogWarning(state.Length);
+        //Debug.LogWarning(state.Length);
 
         if (!IsClient) return;//just in case lol
         sharableGameState = NewState;//set the game state variable of the clients just in case
@@ -214,6 +218,10 @@ public class GameManager : NetworkBehaviour
             case "gamestart"://sent when the game starts
                 Lobby.Instance.CloseUI();
                 return;
+            case "ordermoves":
+                HUD.Instance.DisplayHUDMessage("Give move orders to your units.");
+                return;
+
             default: return;
         }
     }
@@ -233,7 +241,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     /// <param name="client">The client you want the player bind to</param>
     /// <param name="canCreateNewPlayers">Weather this can create new players. At the start of the game this is true, but during the game this should be false. (New player objects should not be created during the game)</param>
-    void BindClientToPlayer(Client client, bool canCreateNewPlayers)
+    public void BindClientToPlayer(Client client, bool canCreateNewPlayers)
     {
         foreach (var player in sharableGameState.Players) //check if there is already a player object without a controller and bind to it (e.g. when a client is reconnecting to a game)
         {
@@ -263,6 +271,21 @@ public class GameManager : NetworkBehaviour
 
         client.controlledPlayerId.Value = newPlayer.playerId; //ASYNC OPERATION!!! SETTING A NETWORK VARIABLE IN CLIENT
 
+    }
+
+    /// <summary>
+    /// Breaks the bind between a client object and a player object.
+    /// </summary>
+    /// <param name="client"></param>
+    public void UnbindClient(Client client)
+    {
+        foreach (var player in sharableGameState.Players)
+        {
+            if (player.controllerClientId == client.OwnerClientId)
+            {
+                player.controllerConnected = false; // the client responsible for this player has now left the game
+            }
+        }
     }
 
     private void OnDrawGizmos()

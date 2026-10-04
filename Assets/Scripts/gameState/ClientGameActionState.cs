@@ -4,17 +4,16 @@ using UnityEngine;
 
 
 [System.Serializable]
-public class ClientGameActionState : MonoBehaviour
+public class ClientGameActionState
 {
     /// <summary>
     /// Creates a new client game actions object. "_clientId" is the owner of these actions, "numberOfPlayers" is the number of players in the game.
     /// </summary>
     /// <param name="_clientId"></param>
     /// <param name="numberOfPlayers"></param>
-    public ClientGameActionState(ulong _clientId, int numberOfPlayers)
+    public ClientGameActionState(ulong _clientId)
     {
         clientId = _clientId;
-        standings = new bool[numberOfPlayers];
         moveOrders = new List<MoveOrder>();
     }
 
