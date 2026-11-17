@@ -72,7 +72,6 @@ public class LocalGameBoard : MonoBehaviour
     {
         if (localTile.type == serverTile.type) return; // tiles already in sync
         SetTileType(localTile,serverTile.type);
-
     }
 
     //sync all local units
@@ -162,8 +161,8 @@ public class LocalGameBoard : MonoBehaviour
         LocalUnit localUnit = go.GetComponent<LocalUnit>();
         localUnits.Add(localUnit);
         localUnit.transform.position = localMap[(int)gridPosition.x, (int)gridPosition.y].gameObject.transform.position;
+        localUnit.globalId = globalId;
         return localUnit;
-
     }
 
     void DespawnUnit(LocalUnit localUnit)
@@ -173,6 +172,4 @@ public class LocalGameBoard : MonoBehaviour
         localUnits.Remove(localUnit);
         Destroy(localUnit.gameObject);
     }
-
-
 }

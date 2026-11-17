@@ -1,3 +1,4 @@
+using GameState;
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,28 @@ public class ClientGameActionState
     public struct MoveOrder
     {
         public int unitGlobalId;// the global unit id of the unit that is moved
-        public Vector2 destinationPosition;// the destination position of the unit
+        public Vector2Int destinationPosition;// the destination position of the unit
+    }
+
+    public static MoveOrder TestMoveOrder() {
+        return new MoveOrder { destinationPosition = Vector2Int.one, unitGlobalId = 1 };
+    }
+
+    public SharableGameState ApplyGameAction(SharableGameState state) {
+
+        foreach (MoveOrder moveOrder in moveOrders) {
+            state.Units[moveOrder.unitGlobalId].SetPosion(moveOrder.destinationPosition);
+        }
+
+        return state;
+    }
+
+    public static ClientGameActionState TextAction() {
+        
+        ClientGameActionState state = new ClientGameActionState(0);
+        
+        state.moveOrders.Add(TestMoveOrder());
+
+        return state;
     }
 }

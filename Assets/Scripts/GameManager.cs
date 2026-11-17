@@ -86,12 +86,13 @@ public class GameManager : NetworkBehaviour
     private void Update()
     {
         //debug stuff        
-        sharableGameState.debugDrawMap();
+        //sharableGameState.debugDrawMap();
 
         if (Input.GetKeyDown(KeyCode.W)) {
             foreach (BoardUnit u in sharableGameState.Units) {
                 sharableGameState.MoveUnit(u, new Vector2Int(0, -1));
             }
+            SyncSharableGameState();
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -99,6 +100,7 @@ public class GameManager : NetworkBehaviour
             {
                 sharableGameState.MoveUnit(u, new Vector2Int(-1, 0));
             }
+            SyncSharableGameState();
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
@@ -106,6 +108,7 @@ public class GameManager : NetworkBehaviour
             {
                 sharableGameState.MoveUnit(u, new Vector2Int(0, 1));
             }
+            SyncSharableGameState();
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -113,6 +116,7 @@ public class GameManager : NetworkBehaviour
             {
                 sharableGameState.MoveUnit(u, new Vector2Int(1, 0));
             }
+            SyncSharableGameState();
         }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
@@ -149,12 +153,16 @@ public class GameManager : NetworkBehaviour
             }
 
             foreach (Player p in sharableGameState.Players) { 
+                //after turn is passed set all pass statuses to false
                 p.playerPassedTurn = false;
             }
 
             //4. Get player moves and apply them.
             Dictionary<ulong, ClientGameActionState> clientActions = await ClientGameActionHandler.Instance.GetClientActions(); //Returns a dict of client actions. The ulong key is the clientId of the client, ClientGameActionState is a serializable blob similar to SharableGameState which describes the actions taken by the client.
             //Debug.Log("number of clients: " + clientActions.Count);
+            clientActions[0].ApplyGameAction(sharableGameState);
+
+            SyncSharableGameState();
 
             //5. Sync state and set a small move animation timer (~5-10sec)
 
@@ -180,6 +188,8 @@ public class GameManager : NetworkBehaviour
         {
             sharableGameState.MoveUnit(u, new Vector2Int(0, -1));
         }
+
+        SyncSharableGameState();
     }
 
     /// <summary>

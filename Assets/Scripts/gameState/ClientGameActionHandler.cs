@@ -44,6 +44,14 @@ public class ClientGameActionHandler : NetworkBehaviour
         ClientGameActionState clientActions = ObjectSerialization.Deserialize<ClientGameActionState>(data);
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            localClientActionState = ClientGameActionState.TextAction();
+        }
+    }
+
     /// <summary>
     /// Can be called locally to reset all actions including standing and move orders.
     /// </summary>
@@ -59,8 +67,9 @@ public class ClientGameActionHandler : NetworkBehaviour
     {
         if (!IsServer) return null;
         Dictionary<ulong, ClientGameActionState> actions = new Dictionary<ulong, ClientGameActionState>();
-        actions.Add(0, new ClientGameActionState(69));
-        actions.Add(1, new ClientGameActionState(67));
+        actions.Add(0, ClientGameActionState.TextAction());
+
+
         return Task.FromResult(actions);
     }
 }

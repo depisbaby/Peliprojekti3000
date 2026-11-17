@@ -17,7 +17,6 @@ public class CameraRig : MonoBehaviour
     void Update()
     {
 
-
         float edgeMargin = 50f;
 
         Vector3 mousePos = Input.mousePosition;
